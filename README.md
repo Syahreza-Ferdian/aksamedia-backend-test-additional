@@ -1,66 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Explanation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### Deskripsi Repository
+Repository ini bertujuan untuk menghitung dua jenis nilai, yaitu **Nilai RT** dan **Nilai ST**, berdasarkan data yang terdapat pada tabel `nilai`. Nilai dihitung menggunakan Laravel dengan skema perhitungan yang telah ditentukan.
+<hr>
 
-## About Laravel
+### Struktur Tabel `Nilai`
+Tabel `nilai` memiliki kolom-kolom berikut yang relevan untuk perhitungan:
+-   **id**: Primary key dari tabel.
+-   **nama**: Nama siswa.
+-   **nisn**: Nomor Induk Siswa Nasional.
+-   **materi_uji_id**: ID dari materi uji.
+-   **nama_pelajaran**: Nama pelajaran terkait (digunakan untuk Nilai RT dan ST).
+-   **pelajaran_id**: ID dari pelajaran (digunakan untuk Nilai RT dan ST).
+-   **skor**: Skor siswa pada pelajaran tersebut (skor per mata pelajaran adalah komponen yang dijumlahkan).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Kolom lainnya yang juga ada di tabel tetapi tidak digunakan secara langsung dalam perhitungan ini meliputi:
+- **id_status**, **profil_tes_id**, **id_siswa**, **soal_bank_paket_id**, **jk**, **soal_benar**, **sesi**, **id_pelaksanaan**, **nama_sekolah**, **total_soal**, **urutan**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<hr>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Perhitungan Nilai RT
+#### Skema Perhitungan
 
-## Learning Laravel
+Nilai RT dihitung menggunakan _materi_uji_id 7_, dengan langkah-langkah berikut:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1.  Identifikasi pelajaran yang akan dihitung berdasarkan nama pelajaran tertentu: ARTISTIC, CONVENTIONAL, ENTERPRISING, INVESTIGATIVE, REALISTIC, dan SOCIAL.
+    
+2.  Untuk setiap siswa, jumlahkan skor dari masing-masing pelajaran.
+    
+3.  Abaikan data dengan nama pelajaran `Pelajaran Khusus`.
+    
+4.  Kelompokkan hasil perhitungan berdasarkan siswa.
+    
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Alur Kerja Logika
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   Buat daftar pelajaran yang akan dihitung beserta nama alias untuk setiap pelajaran.
+    
+-   Iterasi melalui daftar pelajaran tersebut, kemudian tambahkan kolom perhitungan untuk masing-masing pelajaran dengan cara menjumlahkan skor berdasarkan kondisi nama pelajaran.
+    
+-   Tambahkan filter untuk memastikan hanya _materi_uji_id 7_ yang dihitung dan abaikan `Pelajaran Khusus`.
+    
+-   Kelompokkan hasil berdasarkan kolom `nama` dan `nisn` untuk setiap siswa. 
 
-## Laravel Sponsors
+<hr>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Perhitungan Nilai ST
 
-### Premium Partners
+#### Skema Perhitungan
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Nilai ST dihitung menggunakan _materi_uji_id 4_, dengan langkah-langkah berikut:
 
-## Contributing
+1.  Gunakan bobot khusus untuk setiap pelajaran:
+    
+    -   _pelajaran_id 44_ dikali **41.67**
+        
+    -   _pelajaran_id 45_ dikali **29.67**
+        
+    -   _pelajaran_id 46_ dikali **100**
+        
+    -   _pelajaran_id 47_ dikali **23.81**
+        
+2.  Hitung total nilai dengan menjumlahkan hasil dari semua perkalian untuk setiap siswa.
+    
+3.  Urutkan hasil akhir berdasarkan total nilai terbesar.
+    
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Alur Kerja Logika
 
-## Code of Conduct
+-   Buat daftar pelajaran yang akan dihitung beserta bobot perkalian untuk setiap pelajaran.
+    
+-   Iterasi melalui daftar pelajaran tersebut, tambahkan kolom perhitungan untuk masing-masing pelajaran dengan cara mengalikan skor dengan bobot.
+    
+-   Hitung kolom total dengan menjumlahkan semua kolom hasil perkalian.
+    
+-   Tambahkan filter untuk memastikan hanya _materi_uji_id 4_ yang dihitung.
+    
+-   Kelompokkan hasil berdasarkan `nama` dan `nisn` untuk setiap siswa, lalu urutkan berdasarkan nilai total secara menurun.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+<hr>
 
-## Security Vulnerabilities
+### Output
+#### Nilai RT
+Hasil berupa array dengan format <br>
+![enter image description here](https://www.upload.ee/image/17581064/nilaiRT.png) <br>
+Dapat juga diakses langsung melalui [https://aksamedia-syahreza-be-test-additional.vercel.app/api/api/nilaiRT](https://aksamedia-syahreza-be-test-additional.vercel.app/api/api/nilaiRT)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Nilai ST
+Hasil merupakan array dengan format: <br>
+![enter image description here](https://www.upload.ee/image/17581072/nilaiST.png) <br>
+Dapat juga diakses langsung melalui [https://aksamedia-syahreza-be-test-additional.vercel.app/api/api/nilaiST](https://aksamedia-syahreza-be-test-additional.vercel.app/api/api/nilaiST)
