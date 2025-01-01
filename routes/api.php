@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/nilaiRT', [NilaiController::class, 'hitungNilaiRT']);
+Route::get('/nilaiST', [NilaiController::class, 'hitungNilaiST']);
